@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    android:clipChildren="false"
+    >
+
+    <!--clipChildren: 默认值为true,
+    子View 的大小只能在父View规定的范围之内，
+    比如父View的高为50，子View的高为60 ,那么多处的部分就会被裁剪。
+    如果我们设置这个值为false的话，那么多处的部分就不会被裁剪了。
+    这里我们就可以利用这个属性来实现了这个效果了，
+    我们设置ViewPager的父布局的clipChildren为false。
+    然后设置ViewPager 左右一定的边距，那么左右就空出了一定的区域，
+    利用clipChildren 属性，就能让前后页面的部分显示在当前页了。布局如下：-->
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+
+        />
+</LinearLayout>

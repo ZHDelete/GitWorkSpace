@@ -18,6 +18,7 @@ public class AutoPalyAdapter2 extends PagerAdapter {
     private List<String> gifUrls;
     private Context mContext;
 
+
     private static final String TAG = "AutoPalyAdapter2";
     List<Integer> drawableGifs;
 
