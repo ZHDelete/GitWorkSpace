@@ -19,11 +19,11 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.zhyim.gaussian_blur_header.R;
+import com.zhyim.gaussian_blur_header.blur.BitmapProcessor;
 import com.zhyim.gaussian_blur_header.utils.CommonUtil;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * =====================================
@@ -33,40 +33,40 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
  * =====================================
  */
 
-public class GaussianView extends View {
+public class BlurBackground extends View {
 
     private static final String TAG = "GaussianView";
 
     //背景图片
     private Bitmap bgImg;
     //组件宽高
-    private int mWidth,mHeight;
+    private int mWidth, mHeight;
     //bg 的 Rect
-    private Rect mRect,mCenterRect;
+    private Rect mRect, mCenterRect;
     //画 图片的画笔
     private Paint mPaint;
     //画底边线的 画笔
-    private Paint mLinePaint,mLinePaint2;
+    private Paint mLinePaint, mLinePaint2;
 
     //底边线 path
     private Path bottomPath, bottomPath2;
-    private PointF startP ,endP,controlP;
+    private PointF startP, endP, controlP;
 
     private int controlHeight;
     private int startHeight;
 
 
-    public GaussianView(Context context) {
+    public BlurBackground(Context context) {
         super(context);
         init();
     }
 
-    public GaussianView(Context context, @Nullable AttributeSet attrs) {
+    public BlurBackground(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public GaussianView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BlurBackground(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -95,7 +95,7 @@ public class GaussianView extends View {
 
         startP = new PointF(0, 0);
         endP = new PointF(0, 0);
-        controlP= new PointF(0, 0);
+        controlP = new PointF(0, 0);
         bottomPath = new Path();
         bottomPath2 = new Path();
 
@@ -155,26 +155,22 @@ public class GaussianView extends View {
     protected void onDraw(final Canvas canvas) {
 //        super.onDraw(canvas);
 
-        blurBitmap(bgImg, new BlurCallback() {
-            @Override
-            public void getBlurBitmap(Bitmap bitmap) {
-                Log.d(TAG, "回调拿到模糊后的Bitmap:" + bitmap);
-                drawBgBitmap(bitmap, canvas);
-            }
-        });
+
+        Bitmap blurBmp = BitmapProcessor.rsBlur(getContext(), bgImg, 4, 1 / 2f);
+        drawBgBitmap(blurBmp, canvas);
 
         //画底部 波浪线
         drawBottomLine(canvas);
 
         //画 中心 头像
-        drawCenterBitmap(canvas);
+//        drawCenterBitmap(canvas);
     }
 
 
-    private void  drawBottomLine(Canvas canvas) {
+    private void drawBottomLine(Canvas canvas) {
         startP.x = 0;
         startP.y = mHeight - startHeight;
-        controlP.x = mWidth /4;
+        controlP.x = mWidth / 4;
         controlP.y = mHeight - startHeight - controlHeight;
         endP.x = mWidth / 2;
         endP.y = mHeight - startHeight;
@@ -184,10 +180,10 @@ public class GaussianView extends View {
 
         bottomPath2.moveTo(startP.x, startP.y);
         bottomPath2.quadTo(controlP.x, controlP.y, endP.x, endP.y);
-        bottomPath2.quadTo(controlP.x,mHeight - startHeight + controlHeight,
-                startP.x,startP.y);
+        bottomPath2.quadTo(controlP.x, mHeight - startHeight + controlHeight,
+                startP.x, startP.y);
 
-        startP.x = mWidth/2;
+        startP.x = mWidth / 2;
         startP.y = mHeight - startHeight;
         controlP.x = mWidth - mWidth / 4;
         controlP.y = mHeight - startHeight + controlHeight;
@@ -197,12 +193,12 @@ public class GaussianView extends View {
         bottomPath.quadTo(controlP.x, controlP.y, endP.x, endP.y);
 
         bottomPath.lineTo(mWidth, mHeight);
-        bottomPath.lineTo(0,mHeight);
+        bottomPath.lineTo(0, mHeight);
         bottomPath.lineTo(0, mWidth - startHeight);
         bottomPath.close();
 
         canvas.drawPath(bottomPath, mLinePaint);
-        canvas.drawPath(bottomPath2,mLinePaint2);
+        canvas.drawPath(bottomPath2, mLinePaint2);
     }
 
 
@@ -220,7 +216,7 @@ public class GaussianView extends View {
         public void getBlurBitmap(Bitmap bitmap);
     }
 
-    public void blurBitmap(Bitmap bitmap, final BlurCallback blurCallback) {
+    public void blurWithGlide(Bitmap bitmap, final BlurCallback blurCallback) {
         Glide.with(getContext())
                 .load(R.drawable.miao)
                 .bitmapTransform(new BlurTransformation(getContext(), 11))
@@ -244,7 +240,7 @@ public class GaussianView extends View {
 
     }
 
-    public void roundBitmap(Bitmap bitmap, final BlurCallback blurCallback) {
+    public void roundWithGrlide(Bitmap bitmap, final BlurCallback blurCallback) {
         Glide.with(getContext())
                 .load(R.drawable.miao)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
@@ -269,7 +265,7 @@ public class GaussianView extends View {
 
     private void drawCenterBitmap(final Canvas canvas) {
         Log.d(TAG, "drawCenterBitmap");
-        roundBitmap(bgImg, new BlurCallback() {
+        roundWithGrlide(bgImg, new BlurCallback() {
             @Override
             public void getBlurBitmap(Bitmap bitmap) {
 //                int w = bitmap.getWidth();

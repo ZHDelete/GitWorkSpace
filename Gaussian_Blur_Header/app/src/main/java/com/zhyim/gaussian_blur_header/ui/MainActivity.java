@@ -7,28 +7,28 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.zhyim.gaussian_blur_header.R;
-import com.zhyim.gaussian_blur_header.widget.GaussianView;
+import com.zhyim.gaussian_blur_header.widget.BlurBackground;
+import com.zhyim.gaussian_blur_header.widget.BlurHeaderView;
 
 public class MainActivity extends AppCompatActivity {
-GaussianView gaussianView;
+    BlurBackground blurBackground;
     ImageView showIv;
+
+    private BlurHeaderView blurHeaderView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        gaussianView = (GaussianView) findViewById(R.id.gausinan_view);
-        showIv = (ImageView) findViewById(R.id.iv);
+//        setContentView(R.layout.activity_main);
 
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.miao);
-        gaussianView.setBgImg(bitmap);
+//        blurBackground = (BlurBackground) findViewById(R.id.gausinan_view);
+//        showIv = (ImageView) findViewById(R.id.iv);
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.miao);
+//        blurBackground.setBgImg(bitmap);
+        blurHeaderView = new BlurHeaderView(this);
+        blurHeaderView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.miao));
 
-        gaussianView.roundBitmap(bitmap, new GaussianView.BlurCallback() {
-            @Override
-            public void getBlurBitmap(Bitmap bitmap) {
-                showIv.setImageBitmap(bitmap);
-            }
-        });
-
+        setContentView(blurHeaderView);
     }
 }
