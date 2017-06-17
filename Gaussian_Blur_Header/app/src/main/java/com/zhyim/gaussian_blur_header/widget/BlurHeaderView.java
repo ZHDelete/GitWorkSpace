@@ -25,7 +25,6 @@ public class BlurHeaderView extends RelativeLayout {
 
     private Bitmap sourceBmp;
     private BlurBackground blurView;
-    private CardView avatorCard;
     private ImageView avatarIv;
 
 
@@ -69,7 +68,6 @@ public class BlurHeaderView extends RelativeLayout {
     private void init(Context context) {
         View content = LayoutInflater.from(context).inflate(R.layout.view_blur_header, this, true);
         blurView = (BlurBackground) content.findViewById(R.id.blur_background);
-        avatorCard = (CardView) content.findViewById(R.id.avatar_card);
         avatarIv = (ImageView) content.findViewById(R.id.avatar_iv);
 
     }
