@@ -49,7 +49,7 @@ public class IndicatorActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_indicator);
 
-        mVpager = (ViewPager) findViewById(R.id.viewpager);
+        mVpager = (ViewPager) findViewById(R.id.view_pager);
         rootView = (RelativeLayout) findViewById(R.id.root_content);
 
 
