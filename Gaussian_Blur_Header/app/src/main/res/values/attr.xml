@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="BlurHeaderView">
+        <attr name="image" format="reference" />
+
+        <attr name="topText" format="string"/>
+        <attr name="gender" format="enum">
+            <enum name="famel" value="0" />
+            <enum name="male" value="1" />
+        </attr>
+
+        <attr name="topLeftText" format="string" />
+        <attr name="topRightText" format="string" />
+        <attr name="botLeftText" format="string" />
+        <attr name="botRightText" format="string" />
+        <attr name="botText" format="string" />
+
+
+    </declare-styleable>
+</resources>

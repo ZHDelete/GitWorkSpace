@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 //        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.miao);
 //        blurBackground.setBgImg(bitmap);
         blurHeaderView = new BlurHeaderView(this);
+        blurHeaderView.setGender(BlurHeaderView.Gender.famel);
         blurHeaderView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.miao));
 
         setContentView(blurHeaderView);
