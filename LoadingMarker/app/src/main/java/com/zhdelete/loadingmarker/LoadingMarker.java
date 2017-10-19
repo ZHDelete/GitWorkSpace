@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -27,8 +28,8 @@ public class LoadingMarker extends View {
     private Paint lightPaint;
     private Paint ovalPaint;
 
-    private int darkColor;
-    private int lightColor;
+    private int darkColor =Color.BLACK;
+    private int lightColor=Color.BLUE;
 
     private boolean isLoading;
     private ValueAnimator loadingAnim;
@@ -90,6 +91,13 @@ public class LoadingMarker extends View {
 
     }
 
+    public void setDarkColor(@ColorInt int darkColor) {
+        this.darkColor = darkColor;
+    }
+
+    public void setLightColor(@ColorInt int lightColor) {
+        this.lightColor = lightColor;
+    }
 
     public boolean isLoading() {
         return isLoading;
