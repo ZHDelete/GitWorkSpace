@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LoadingMarker">
+        <attr name="darkClor" format="color" />
+        <attr name="lightColor" format="color" />
+        <attr name="isLoading" format="boolean" />
+    </declare-styleable>
+
+</resources>
