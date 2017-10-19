@@ -187,7 +187,7 @@ public class LoadingMarker extends View {
         canvas.drawCircle(centerX, centerY, smallRadius, lightPaint);
         //画 底座
         RectF ovalBot = new RectF(centerX - ovalBotXRadius, measureHeight - ovalBotYRadius * 2, centerX + ovalBotXRadius, measureHeight);
-        canvas.drawArc(ovalBot,0,360,true,lightPaint);
+        canvas.drawArc(ovalBot,0,360,true,darkPaint);
         //画 竖线
         canvas.drawLine(centerX, centerY * 2, centerX, measureHeight - ovalBotYRadius, darkPaint);
 
