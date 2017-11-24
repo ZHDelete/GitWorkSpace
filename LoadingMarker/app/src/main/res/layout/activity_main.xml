@@ -11,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="90dp"
         android:layout_centerInParent="true"
-        app:darkClor="@color/bg_dark_color"
+        app:darkColor="@color/bg_dark_color"
         app:isLoading="true"
         app:lightColor="@color/center_ligth_color" />
 

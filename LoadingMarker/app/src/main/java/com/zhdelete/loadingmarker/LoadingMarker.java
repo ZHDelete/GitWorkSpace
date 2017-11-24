@@ -52,7 +52,7 @@ public class LoadingMarker extends View {
 
         //拿到 color
         TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.LoadingMarker, defStyleAttr, 0);
-        darkColor = ta.getColor(R.styleable.LoadingMarker_darkClor, Color.BLACK);
+        darkColor = ta.getColor(R.styleable.LoadingMarker_darkColor, Color.BLACK);
         lightColor = ta.getColor(R.styleable.LoadingMarker_lightColor, Color.BLUE);
         isLoading = ta.getBoolean(R.styleable.LoadingMarker_isLoading, false);
         ta.recycle();
