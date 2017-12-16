@@ -18,6 +18,8 @@ import android.view.View;
 
 public class RangeCircle extends View {
 
+    private int radius;
+
     public RangeCircle(Context context) {
         this(context, null);
     }
@@ -109,7 +111,7 @@ public class RangeCircle extends View {
         int centerX = measureWidth / 2;
         int centerY = measureHeight / 2;
         int step = measureWidth / 10 / 2;
-        int radius = level * step;
+        radius = level * step;
         if (radius != 0) {
             circlePaint.setStyle(Paint.Style.STROKE);
             canvas.drawCircle(centerX, centerY, radius, circlePaint);
@@ -127,4 +129,9 @@ public class RangeCircle extends View {
         if (DEBUG)
             Log.d(TAG, logMsg);
     }
+
+    public int getCurrentRadius() {
+        return radius;
+    }
+
 }
