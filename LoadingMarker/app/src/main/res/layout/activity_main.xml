@@ -6,19 +6,32 @@
     android:layout_height="match_parent"
     tools:context="com.zhdelete.loadingmarker.MainActivity">
 
-    <com.zhdelete.loadingmarker.LoadingMarker
-        android:id="@+id/loading_marker"
-        android:layout_width="50dp"
-        android:layout_height="90dp"
+    <!--<com.zhdelete.loadingmarker.LoadingMarker-->
+        <!--android:id="@+id/loading_marker"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="90dp"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--app:darkColor="@color/bg_dark_color"-->
+        <!--app:isLoading="true"-->
+        <!--app:lightColor="@color/center_ligth_color" />-->
+
+    <com.zhdelete.loadingmarker.LoadingBubble
+        android:id="@+id/loading_bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:background_color="#5D4A4A"
+        app:foreground_color="#FFE248"
+        app:base_color="#66660808"
+        app:loading="false"
         android:layout_centerInParent="true"
-        app:darkColor="@color/bg_dark_color"
-        app:isLoading="true"
-        app:lightColor="@color/center_ligth_color" />
+        />
 
     <Button
-        android:id="@+id/controlBtn"
+        android:id="@+id/control_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="control" />
+        android:text="control"
+        android:layout_alignParentBottom="true"
+        />
 
 </RelativeLayout>

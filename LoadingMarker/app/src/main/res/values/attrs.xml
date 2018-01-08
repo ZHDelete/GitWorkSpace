@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <declare-styleable name="LoadingMarker">
         <attr name="darkColor" format="color" />
         <attr name="lightColor" format="color" />
@@ -10,6 +11,13 @@
         <attr name="circleColor" format="color"/>
         <attr name="innerColor" format="color"/>
         <attr name="level" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="LoadingBubble">
+        <attr name="background_color" format="color" />
+        <attr name="foreground_color" format="color"/>
+        <attr name="base_color" format="color" />
+        <attr name="loading" format="boolean" />
     </declare-styleable>
 
 </resources>
