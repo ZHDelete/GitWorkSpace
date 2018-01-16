@@ -25,11 +25,11 @@ import android.view.animation.BounceInterpolator;
  * =====================================
  * author      :  ZHDelete
  * date        :  2017/10/18
- * description :  地图 加载的 Bubble 先 shake  再 rotate
+ * description :  地图 加载的 Bubble
  * =====================================
  */
 
-public class LoadingBubble extends View {
+public class LoadingBubble_Padding extends View {
 
     private Paint bgPaint;
     private Paint forePaint;
@@ -48,15 +48,15 @@ public class LoadingBubble extends View {
 
     private ObjectAnimator rotateAnim = ObjectAnimator.ofFloat(this, "rotateDegree", 0f, 360f);
 
-    public LoadingBubble(Context context) {
+    public LoadingBubble_Padding(Context context) {
         this(context, null);
     }
 
-    public LoadingBubble(Context context, @Nullable AttributeSet attrs) {
+    public LoadingBubble_Padding(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LoadingBubble(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public LoadingBubble_Padding(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
     }
@@ -72,7 +72,7 @@ public class LoadingBubble extends View {
         isLoading = ta.getBoolean(R.styleable.LoadingBubble_loading, false);
         ta.recycle();
 
-        log(String.format("backgroundColor -> %d foregroundColor -> %d baseColor -> %d ", backgroundColor, foregroundColor, baseColor));
+        //log(String.format("backgroundColor -> %d foregroundColor -> %d baseColor -> %d ", backgroundColor, foregroundColor, baseColor));
 
         bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bgPaint.setColor(backgroundColor);
@@ -197,8 +197,6 @@ public class LoadingBubble extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         float desity = metrics.density;
 
@@ -231,13 +229,19 @@ public class LoadingBubble extends View {
             mHeight = defHeith;
         }
 
-//        log(String.format("mWidth -> %d mHeight -> %s", mWidth, mHeight));
+        log(String.format("mWidth -> %d mHeight -> %s", mWidth, mHeight));
 //        setMeasuredDimension(mWidth, mHeight);
 
-        int widthWidthPadding = mWidth + getPaddingLeft() + getPaddingRight();
-        int heightWidhtPadding = mHeight + getPaddingTop() + getPaddingBottom();
-        setMeasuredDimension(widthWidthPadding,heightWidhtPadding);
+        log(String.format("onMeasure - paddingLeft -> %s paddingTop -> %s paddingRight -> %s paddingBottom -> %s", getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom()));
+        int paddingWidth = mWidth + getPaddingLeft() + getPaddingRight();
+        int paddingHeight = mHeight + getPaddingTop() + getPaddingBottom();
 
+//这种 写法 是按照 hyman的写法,不考虑 unspecified 这种测量模式,但是在这里,当测试 padding 4,4,4,4 时 发现 最后测量的宽度为 31 *2 +
+//        setMeasuredDimension(paddingWidth, paddingHeight);
+
+
+        setMeasuredDimension(resolveSize(paddingWidth, widthMeasureSpec),
+                resolveSize(paddingHeight, heightMeasureSpec));
     }
 
     @Override
@@ -245,29 +249,56 @@ public class LoadingBubble extends View {
 //        super.onDraw(canvas);
         //父类onDraw 空实现 注不注掉 都可
 
+//        canvas.drawColor(Color.BLUE);
+
         int measureWidth = getMeasuredWidth();
         int measureHeight = getMeasuredHeight();
 
-        final int centerX = measureWidth / 2;
-        final int centerY = centerX;
+
+        int leftPadding = getPaddingLeft();
+        int topPadding = getPaddingTop();
+        int rightPading = getPaddingRight();
+        int botPadding = getPaddingBottom();
+        log(String.format("onDraw - measureWidth -> %s measureHeight -> %s\npaddingLeft -> %s paddingTop -> %s paddingRight -> %s paddingBottom -> %s",
+                measureWidth, measureHeight,
+                leftPadding, topPadding, rightPading, botPadding));
+
+        int pureWidth = measureWidth - leftPadding - rightPading;
+        int pureHeight = measureHeight - topPadding - botPadding;
+
+//        final int centerX = measureWidth / 2;
+//        final int centerY = centerX;
+
+        final int centerX = pureWidth / 2 + leftPadding;
+        final int centerY = pureWidth / 2 + topPadding;
 
         //背景 大圆 半径
-        int radius = measureWidth / 2;
+//        int radius = measureWidth / 2;
+        int radius = pureWidth / 2;
         // 标靶半径
         int radiusTarget = radius * 12 / 23;
         //黄色小圆半径
         int smallRadius = radius * 7 / 23;
 
         //底部椭圆 宽高
-        int ovalHeight = measureHeight / 11;
+//        int ovalHeight = measureHeight / 11;
+//        int ovalWidth = ovalHeight * 2;
+//        //底部椭圆 圆心
+//        int ovalX = centerX;
+//        int ovalY = measureHeight * 10 / 11 + ovalHeight / 2;
+
+        int ovalHeight = pureHeight / 11;
         int ovalWidth = ovalHeight * 2;
         //底部椭圆 圆心
         int ovalX = centerX;
-        int ovalY = measureHeight * 10 / 11 + ovalHeight / 2;
+        int ovalY = pureHeight * 10 / 11 + ovalHeight / 2 + topPadding;
 
         //背景 弧形
-        RectF arcBound = new RectF(0, 0, measureWidth, measureWidth);
+//        RectF arcBound = new RectF(0, 0, measureWidth, measureWidth);
+//        bubblePath.addArc(arcBound, -212, 244);
+        RectF arcBound = new RectF(leftPadding, topPadding, leftPadding + pureWidth, topPadding + pureWidth);
         bubblePath.addArc(arcBound, -212, 244);
+
         //
         int pathBotX = ovalX;
         int pathBotY = ovalY - ovalHeight / 6;

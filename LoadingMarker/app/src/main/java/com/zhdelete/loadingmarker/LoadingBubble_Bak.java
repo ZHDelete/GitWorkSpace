@@ -1,7 +1,6 @@
 package com.zhdelete.loadingmarker;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -25,11 +24,11 @@ import android.view.animation.BounceInterpolator;
  * =====================================
  * author      :  ZHDelete
  * date        :  2017/10/18
- * description :  地图 加载的 Bubble 先 shake  再 rotate
+ * description :  地图 加载的 Bubble 先 loadign  再 shake
  * =====================================
  */
 
-public class LoadingBubble extends View {
+public class LoadingBubble_Bak extends View {
 
     private Paint bgPaint;
     private Paint forePaint;
@@ -48,15 +47,15 @@ public class LoadingBubble extends View {
 
     private ObjectAnimator rotateAnim = ObjectAnimator.ofFloat(this, "rotateDegree", 0f, 360f);
 
-    public LoadingBubble(Context context) {
+    public LoadingBubble_Bak(Context context) {
         this(context, null);
     }
 
-    public LoadingBubble(Context context, @Nullable AttributeSet attrs) {
+    public LoadingBubble_Bak(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LoadingBubble(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public LoadingBubble_Bak(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
     }
@@ -97,7 +96,42 @@ public class LoadingBubble extends View {
         rotateAnim.setRepeatCount(ValueAnimator.INFINITE);
         rotateAnim.setRepeatMode(ValueAnimator.REVERSE);
 
+        rotateAnim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                log("rotateAnim - onAnimationStart");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                log("rotateAnim - onAnimationEnd");
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                log("rotateAnim - onAnimationCancel");
+
+                shakWhenFinish();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                log("rotateAnim - onAnimationRepeat");
+            }
+        });
+
         setLoading(isLoading);
+
+    }
+
+    private void shakWhenFinish() {
+        float startTransY = getTranslationY();
+        float endTransY = startTransY - 50;
+        log(String.format("startTransY -> %s endTransY -> %s", startTransY, endTransY));
+        ObjectAnimator shakeY = ObjectAnimator.ofFloat(this, "translationY", startTransY, endTransY, startTransY);
+        shakeY.setDuration(500);
+        shakeY.setInterpolator(new BounceInterpolator());
+        shakeY.start();
     }
 
     public float getRotateDegree() {
@@ -142,42 +176,13 @@ public class LoadingBubble extends View {
     }
 
     public void setLoading(boolean loading) {
-
         isLoading = loading;
-
-//        if (loading) {
-//            if (!rotateAnim.isStarted()) {
-//                rotateAnim.start();
-//            }
-//        } else {
-//            rotateAnim.cancel();
-//            setRotateDegree(0f);
-//        }
-        ObjectAnimator shakeY = null;
         if (loading) {
             if (!rotateAnim.isStarted()) {
-                float startTransY = getTranslationY();
-                float endTransY = startTransY - 50;
-                log(String.format("setLoading - startTransY -> %s endTransY -> %s", startTransY, endTransY));
-                shakeY = ObjectAnimator.ofFloat(this, "translationY", startTransY, endTransY, startTransY);
-                shakeY.setDuration(500);
-                shakeY.setInterpolator(new BounceInterpolator());
-                shakeY.start();
-                shakeY.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        log(String.format("shakeY - onAnimationEnd"));
-                        rotateAnim.start();
-                    }
-                });
+                rotateAnim.start();
             }
         } else {
-            if (shakeY != null && shakeY.isRunning()) {
-                shakeY.cancel();
-            }
-            if (rotateAnim.isRunning()) {
-                rotateAnim.cancel();
-            }
+            rotateAnim.cancel();
             setRotateDegree(0f);
         }
     }
@@ -231,13 +236,8 @@ public class LoadingBubble extends View {
             mHeight = defHeith;
         }
 
-//        log(String.format("mWidth -> %d mHeight -> %s", mWidth, mHeight));
-//        setMeasuredDimension(mWidth, mHeight);
-
-        int widthWidthPadding = mWidth + getPaddingLeft() + getPaddingRight();
-        int heightWidhtPadding = mHeight + getPaddingTop() + getPaddingBottom();
-        setMeasuredDimension(widthWidthPadding,heightWidhtPadding);
-
+        log(String.format("mWidth -> %d mHeight -> %s", mWidth, mHeight));
+        setMeasuredDimension(mWidth, mHeight);
     }
 
     @Override
@@ -304,7 +304,7 @@ public class LoadingBubble extends View {
     }
 
 
-    private static final String TAG = "LoadingBubble";
+    private static final String TAG = "LoadingMarker";
     private static final boolean DEBUG = true;
 
     private void log(String logMsg) {

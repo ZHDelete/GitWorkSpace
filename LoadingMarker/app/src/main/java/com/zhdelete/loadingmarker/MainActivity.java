@@ -2,7 +2,11 @@ package com.zhdelete.loadingmarker;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -11,7 +15,8 @@ public class MainActivity extends AppCompatActivity {
 
 //    private LoadingMarker loadingMarker;
 
-    private LoadingBubble loadingBubble;
+//    private LoadingBubble loadingBubble;
+    private LoadingBubble_Padding loadingBubble;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +34,24 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        loadingBubble = (LoadingBubble) findViewById(R.id.loading_bubble);
+        loadingBubble = (LoadingBubble_Padding) findViewById(R.id.loading_bubble);
         controlBtn = (Button) findViewById(R.id.control_btn);
         controlBtn.setOnClickListener((v) -> {
+
             if (loadingBubble.isLoading()) {
                 loadingBubble.setLoading(false);
             } else {
                 loadingBubble.setLoading(true);
             }
+
+
         });
-
-
     }
+
+    List<String> strs = new ArrayList<>();
+    private void listAdd() {
+        strs.add(0, "tmp");
+        Log.d("MainActivity", strs.toString());
+    }
+
 }

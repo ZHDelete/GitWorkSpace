@@ -25,11 +25,13 @@ import android.view.animation.BounceInterpolator;
  * =====================================
  * author      :  ZHDelete
  * date        :  2017/10/18
- * description :  地图 加载的 Bubble 先 shake  再 rotate
+ * description :  地图 加载的 Bubble
+ *                改用Thread 实现动画
+ *                因为: 发现,使用ObjectAnimator 存在动画取消是 isRunnign  isStart 失效的情况
  * =====================================
  */
 
-public class LoadingBubble extends View {
+public class LoadingBubble_Thread extends View {
 
     private Paint bgPaint;
     private Paint forePaint;
@@ -48,15 +50,17 @@ public class LoadingBubble extends View {
 
     private ObjectAnimator rotateAnim = ObjectAnimator.ofFloat(this, "rotateDegree", 0f, 360f);
 
-    public LoadingBubble(Context context) {
+    private ObjectAnimator shakeYAnim;
+
+    public LoadingBubble_Thread(Context context) {
         this(context, null);
     }
 
-    public LoadingBubble(Context context, @Nullable AttributeSet attrs) {
+    public LoadingBubble_Thread(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LoadingBubble(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public LoadingBubble_Thread(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
     }
@@ -96,6 +100,7 @@ public class LoadingBubble extends View {
         rotateAnim.setDuration(1000 * 1);
         rotateAnim.setRepeatCount(ValueAnimator.INFINITE);
         rotateAnim.setRepeatMode(ValueAnimator.REVERSE);
+
 
         setLoading(isLoading);
     }
@@ -142,7 +147,6 @@ public class LoadingBubble extends View {
     }
 
     public void setLoading(boolean loading) {
-
         isLoading = loading;
 
 //        if (loading) {
@@ -153,9 +157,11 @@ public class LoadingBubble extends View {
 //            rotateAnim.cancel();
 //            setRotateDegree(0f);
 //        }
+        log(String.format("setLoading - loading -> %s rotateAnim.isRunning -> %s rotatieAnim.isStart -> %s",
+                loading, rotateAnim.isRunning(), rotateAnim.isStarted()));
         ObjectAnimator shakeY = null;
         if (loading) {
-            if (!rotateAnim.isStarted()) {
+            if (!rotateAnim.isRunning()) {
                 float startTransY = getTranslationY();
                 float endTransY = startTransY - 50;
                 log(String.format("setLoading - startTransY -> %s endTransY -> %s", startTransY, endTransY));
@@ -166,22 +172,39 @@ public class LoadingBubble extends View {
                 shakeY.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        log(String.format("shakeY - onAnimationEnd"));
-                        rotateAnim.start();
+                        log(String.format("shakeY - onAnimationEnd - rotateAnim.start()"));
+//                        rotateAnim.start();
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                while (isLoading) {
+                                    float degree = getRotateDegree();
+                                    degree += 5f;
+                                    setRotateDegree(degree);
+                                    try {
+                                        Thread.currentThread().sleep(10L);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }).start();
                     }
                 });
             }
         } else {
             if (shakeY != null && shakeY.isRunning()) {
+                log("setLoading - shakeY.cancel");
                 shakeY.cancel();
             }
-            if (rotateAnim.isRunning()) {
-                rotateAnim.cancel();
-            }
+            log("setLoading - rotateAnim.cancel");
+//            if (rotateAnim.isRunning()) {
+//            rotateAnim.cancel();
+//            }
             setRotateDegree(0f);
         }
     }
-
 
     @Override
     protected void onDetachedFromWindow() {
@@ -207,10 +230,10 @@ public class LoadingBubble extends View {
         wm.getDefaultDisplay().getMetrics(displaymetrics);
         float desity2 = displaymetrics.density;
 
-        log(String.format("desity -> %s desity2 -> %s", desity, desity2));
-        //46 x 75
-        int defWidth = (int) (31 * desity);
-        int defHeith = (int) (50 * desity);
+        log(String.format("desity -> %s desity2 -> %s", desity, desity2));//RedMI 3s log 结果 : desity -> 2.0 desity2 -> 2.0
+        //46 x 75 31 x 50 取 4/5
+        int defWidth = (int) (24.8 * desity);
+        int defHeith = (int) (40 * desity);
 
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -231,13 +254,8 @@ public class LoadingBubble extends View {
             mHeight = defHeith;
         }
 
-//        log(String.format("mWidth -> %d mHeight -> %s", mWidth, mHeight));
-//        setMeasuredDimension(mWidth, mHeight);
-
-        int widthWidthPadding = mWidth + getPaddingLeft() + getPaddingRight();
-        int heightWidhtPadding = mHeight + getPaddingTop() + getPaddingBottom();
-        setMeasuredDimension(widthWidthPadding,heightWidhtPadding);
-
+        log(String.format("mWidth -> %d mHeight -> %s", mWidth, mHeight));
+        setMeasuredDimension(mWidth, mHeight + 100);//100 用来 修正 loadignBubble 与 定位 监听 重叠位置关系
     }
 
     @Override
@@ -246,7 +264,7 @@ public class LoadingBubble extends View {
         //父类onDraw 空实现 注不注掉 都可
 
         int measureWidth = getMeasuredWidth();
-        int measureHeight = getMeasuredHeight();
+        int measureHeight = getMeasuredHeight() - 100;//100 用来 修正 loadignBubble 与 定位 监听 重叠位置关系
 
         final int centerX = measureWidth / 2;
         final int centerY = centerX;
@@ -304,7 +322,7 @@ public class LoadingBubble extends View {
     }
 
 
-    private static final String TAG = "LoadingBubble";
+    private static final String TAG = "HM_LoadingBubble";
     private static final boolean DEBUG = true;
 
     private void log(String logMsg) {
